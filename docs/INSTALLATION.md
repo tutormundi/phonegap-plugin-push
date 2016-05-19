@@ -6,32 +6,56 @@
   - [Common errors](#common-errors)
     - [minSdkVersion === 14](#minsdkversion--14)
 	- [Multidex](#multidex)
+	- [More than one library with package name 'com.google.android.gms'](#more-than-one-library-with-package-name-comgoogleandroidgms)
 - [iOS details](#ios-details)
   - [XCode](#xcode)
   - [Bitcode](#bitcode)
 - [Additional Resources](#additional-resources)
 
-This requires phonegap/cordova CLI 5.0+ ( current stable v1.5.3 )
+This requires phonegap/cordova CLI 5.0+ ( current stable v1.6.3 )
 
 ```
-phonegap plugin add phonegap-plugin-push
+phonegap plugin add phonegap-plugin-push --variable SENDER_ID="XXXXXXX"
 ```
 or
 
 ```
-cordova plugin add phonegap-plugin-push
+cordova plugin add phonegap-plugin-push --variable SENDER_ID="XXXXXXX"
 ```
 
 It is also possible to install via repo url directly ( unstable )
 
 ```
-phonegap plugin add https://github.com/phonegap/phonegap-plugin-push
+phonegap plugin add https://github.com/phonegap/phonegap-plugin-push --variable SENDER_ID="XXXXXXX"
 ```
 
 or
 
 ```
-cordova plugin add https://github.com/phonegap/phonegap-plugin-push
+cordova plugin add https://github.com/phonegap/phonegap-plugin-push --variable SENDER_ID="XXXXXXX"
+```
+
+Where the `XXXXXXX` in `SENDER_ID="XXXXXXX"` maps to the project number in the Google Developer Console. If you are not creating an Android application you can put in anything for this value.
+
+> Note: if you are using ionic you may need to specify the SENDER_ID variable in your package.json.
+
+```
+  "cordovaPlugins": [
+    {
+      "variables": {
+        "SENDER_ID": "XXXXXXX"
+      },
+      "locator": "phonegap-plugin-push"
+    }
+  ]
+```
+
+> Note: You need to specify the SENDER_ID variable in your config.xml if you plan on installing/restoring plugins using the prepare method.  The prepare method will skip installing the plugin otherwise.
+
+```
+<plugin name="phonegap-plugin-push" spec="1.6.0">
+    <variable name="SENDER_ID" value="XXXXXXX" />
+</plugin>
 ```
 
 ## Android details
@@ -43,7 +67,7 @@ As of version 1.3.0 the plugin has been switched to using Gradle/Maven for build
 You will need to ensure that you have installed the following items through the Android SDK Manager:
 
 - Android Support Library version 23 or greater
-- Android Support Repository version 20 or greater
+- Local Maven repository for Support Libraries (formerly Android Support Repository) version 20 or greater
 - Google Play Services version 27 or greater
 - Google Repository version 22 or greater
 
@@ -126,6 +150,26 @@ This causes gradle to fail, and you'll need to identify which plugin is causing 
 See [this for the reference on the cordova plugin specification](https://cordova.apache.org/docs/en/5.4.0/plugin_ref/spec.html#link-18), it'll be usefull to mention it when creating an issue or requesting that plugin to be updated.
 
 Common plugins to suffer from this outdated dependency management are plugins related to *facebook*, *google+*, *notifications*, *crosswalk* and *google maps*.
+
+#### More than one library with package name 'com.google.android.gms'
+
+When some other packages include `cordova-google-play-services` as a dependency, such as is the case with the cordova-admob and cordova-plugin-analytics plugins, it is impossible to also add the phonegap-plugin-push, for the following error will rise during the build process:
+
+```
+:processDebugResources FAILED
+FAILURE: Build failed with an exception.
+
+What went wrong: Execution failed for task ':processDebugResources'. > Error: more than one library with package name 'com.google.android.gms'
+```
+
+Those plugins should be using gradle to include the Google Play Services package but instead they include the play services jar directly or via a plugin dependency. So all of that is bad news. These plugins should be updated to use gradle. Please raise issues on those plugins as the change is not hard to make.
+
+In fact there is a PR open to do just that appfeel/analytics-google#11 for cordova-plugin-analytics. You should bug the team at appfeel to merge that PR.
+
+Alternatively, switch to another plugin that provides the same functionality but uses gradle:
+
+[https://github.com/danwilson/google-analytics-plugin](https://github.com/danwilson/google-analytics-plugin)
+[https://github.com/cmackay/google-analytics-plugin](https://github.com/cmackay/google-analytics-plugin)
 
 ## iOS details
 
