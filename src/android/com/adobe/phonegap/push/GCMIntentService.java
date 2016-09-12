@@ -25,6 +25,8 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
+import io.intercom.android.sdk.push.IntercomPushClient;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,6 +42,7 @@ import java.util.Random;
 
 @SuppressLint("NewApi")
 public class GCMIntentService extends GcmListenerService implements PushConstants {
+    private static final IntercomPushClient intercomPushClient = new IntercomPushClient();
 
     private static final String LOG_TAG = "PushPlugin_GCMIntentService";
     private static HashMap<Integer, ArrayList<String>> messageMap = new HashMap<Integer, ArrayList<String>>();
@@ -62,8 +65,13 @@ public class GCMIntentService extends GcmListenerService implements PushConstant
     public void onMessageReceived(String from, Bundle extras) {
         Log.d(LOG_TAG, "onMessage - from: " + from);
 
-        if (extras != null  && !PushPlugin.isIntercomPush(extras)) {
 
+        if (extras == null) {
+            return;
+        }
+        if (intercomPushClient.isIntercomPush(extras)) {
+            intercomPushClient.handlePush(getApplication(), extras);
+        } else {
             SharedPreferences prefs = getApplicationContext().getSharedPreferences(PushPlugin.COM_ADOBE_PHONEGAP_PUSH, Context.MODE_PRIVATE);
             boolean forceShow = prefs.getBoolean(FORCE_SHOW, false);
             boolean clearBadge = prefs.getBoolean(CLEAR_BADGE, false);
