@@ -10,9 +10,12 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
+import io.intercom.android.sdk.push.IntercomPushClient;
+
 import java.io.IOException;
 
 public class RegistrationIntentService extends IntentService implements PushConstants {
+    private static final IntercomPushClient intercomPushClient = new IntercomPushClient();
     public static final String LOG_TAG = "PushPlugin_RegistrationIntentService";
 
     public RegistrationIntentService() {
@@ -30,6 +33,7 @@ public class RegistrationIntentService extends IntentService implements PushCons
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
             Log.i(LOG_TAG, "new GCM Registration Token: " + token);
 
+            intercomPushClient.sendTokenToIntercom(getApplication(), token);
             // save new token
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString(REGISTRATION_ID, token);
