@@ -68,8 +68,8 @@ static char coldstartKey;
 }
 
 + (BOOL)isIntercomPushMessage:(NSDictionary *)userInfo {
-    //check if we contain the key icm_cid
-    return userInfo && [userInfo isKindOfClass:[NSDictionary class]] && userInfo[@"icm_cid"] != nil;
+    //check if we contain the key intercom_push_type
+    return userInfo && [userInfo isKindOfClass:[NSDictionary class]] && userInfo[@"intercom_push_type"] != nil;
 }
 
 // This code will be called immediately after application:didFinishLaunchingWithOptions:. We need
