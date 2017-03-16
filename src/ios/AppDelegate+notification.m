@@ -67,11 +67,6 @@ static char coldstartKey;
     return [self pushPluginSwizzledInit];
 }
 
-+ (BOOL)isIntercomPushMessage:(NSDictionary *)userInfo {
-    //check if we contain the key intercom_push_type
-    return userInfo && [userInfo isKindOfClass:[NSDictionary class]] && userInfo[@"intercom_push_type"] != nil;
-}
-
 // This code will be called immediately after application:didFinishLaunchingWithOptions:. We need
 // to process notifications in cold-start situations
 - (void)createNotificationChecker:(NSNotification *)notification
@@ -80,7 +75,7 @@ static char coldstartKey;
     if (notification)
     {
         NSDictionary *launchOptions = [notification userInfo];
-        if (launchOptions && ![AppDelegate isIntercomPushMessage:launchOptions]) {
+        if (launchOptions) {
             NSLog(@"coldstart");
             self.launchNotification = [launchOptions objectForKey: @"UIApplicationLaunchOptionsRemoteNotificationKey"];
             self.coldstart = [NSNumber numberWithBool:YES];
@@ -111,10 +106,6 @@ static char coldstartKey;
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     NSLog(@"didReceiveNotification with fetchCompletionHandler");
-
-    if ([AppDelegate isIntercomPushMessage:userInfo]) {
-        return;
-    }
 
     // app is in the foreground so call notification callback
     if (application.applicationState == UIApplicationStateActive) {
