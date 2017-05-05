@@ -1,6 +1,6 @@
 # This fork is obsolete
 
-As of [3.1.2](https://github.com/intercom/intercom-cordova/releases/tag/3.1.2) of the Intercom Cordova plugin, this fork is no longer needed for compatibility with `phonegap-plugin-push`. Please use the [offical phonegap-plugin-push](phonegap/phonegap-plugin-push).
+As of [3.1.2](https://github.com/intercom/intercom-cordova/releases/tag/3.1.2) of the Intercom Cordova plugin, this fork is no longer needed for compatibility with `phonegap-plugin-push`. Please use the [offical phonegap-plugin-push](https://github.com/phonegap/phonegap-plugin-push).
 
 #phonegap-plugin-push [![Build Status](https://travis-ci.org/phonegap/phonegap-plugin-push.svg)](https://travis-ci.org/phonegap/phonegap-plugin-push)
 
